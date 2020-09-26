@@ -6,9 +6,10 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import {itemsRouter} from './items/items.router';
+import {itemsRouter} from './routes/items.routes';
 import {errorHandler} from './middleware/error.middleware';
 import {notFoundHandler} from './middleware/notFound.middleware';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -35,6 +36,28 @@ app.use('/items', itemsRouter);
 
 app.use(errorHandler);
 app.use(notFoundHandler);
+
+
+/**
+ * MongoDB stuff
+ */
+
+const mongoUri: string = process.env.MONGODB_URI || 'error';
+
+// TODO: better practise to handle this error?
+if (!(mongoUri === 'error')) {
+  mongoose.connect(
+      mongoUri, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        useCreateIndex: true,
+      },
+  ).then(() => {
+    console.log('Connected to mongoDB!');
+  }).catch((error: Error) => {
+    console.error('Cannot connect to the database!', error);
+  });
+}
 
 /**
  * Server Activation
