@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
+import mongoose from 'mongoose';
 import {IItem} from '../interfaces/IItem';
-import ItemService from '../services/item';
+import ItemService from '../services/item.services';
 
 // eslint-disable-next-line new-cap
 export const itemsRouter = express.Router();
@@ -18,14 +19,19 @@ itemsRouter.get('/', async (req: Request, res: Response) => {
 
 // GET items/:id
 itemsRouter.get('/:id', async (req: Request, res: Response) => {
-  // const id: number = parseInt(req.params.id, 10);
-  // try {
-  //   const item: IItem = await ItemService.find(id);
-
-  //   res.status(200).send(item);
-  // } catch (error) {
-  //   res.status(404).send(error.message);
-  // }
+  // eslint-disable-next-line new-cap
+  if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+    const id: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params.id);
+    console.log(id);
+    try {
+      const item: IItem = await ItemService.gueryItemByID(id);
+      res.status(200).send(item);
+    } catch (error) {
+      res.status(404).send(error.message);
+    }
+  } else {
+    res.status(404).send('wrong id format');
+  }
 });
 
 // POST items/

@@ -1,8 +1,9 @@
+import mongoose, { Mongoose } from 'mongoose';
 import {IItem} from '../interfaces/IItem';
 import Item from '../models/items';
 
 /**
- * Should return all elem in db
+ * Returns all elem in db
  */
 async function queryAllItem(): Promise<IItem[]> {
   return Item.find()
@@ -12,6 +13,18 @@ async function queryAllItem(): Promise<IItem[]> {
       .catch((error: Error) => {
         throw error;
       });
+}
+
+/**
+ * Returns one Item by ID
+ * @param {number} id ID of the item
+ */
+async function gueryItemByID(id: mongoose.Types.ObjectId): Promise<IItem> {
+  return Item.findById(id).then((data: any) => {
+    return data;
+  }).catch((error: Error) => {
+    throw error;
+  });
 }
 
 /**
@@ -31,4 +44,5 @@ async function addNewItem(item: IItem): Promise<IItem> {
 export default {
   queryAllItem,
   addNewItem,
+  gueryItemByID,
 };
